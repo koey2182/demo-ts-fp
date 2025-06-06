@@ -39,8 +39,8 @@ const makeResult = <T, E extends Error>(
     };
 };
 
-export const makeOkResult = <T, E extends Error>(v: T): Result<T, E> =>
-    makeResult<T, E>(v, undefined);
+export const makeOkResult = <T, E extends Error>(value: T): Result<T, E> =>
+    makeResult<T, E>(value, undefined);
 
 export const makeErrorResult = <T, E extends Error>(error: E): Result<T, E> =>
     makeResult<T, E>(undefined, error);
