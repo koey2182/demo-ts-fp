@@ -1,3 +1,11 @@
-import { run } from './lib/util/result-usage';
+import { ApolloServer } from '@apollo/server';
+import { startStandaloneServer } from '@apollo/server/standalone';
+import { schema } from './api/schema';
 
-run();
+const server = new ApolloServer({
+    schema,
+});
+
+startStandaloneServer(server, {
+    listen: { port: 4000 },
+}).then(({ url }) => console.log(`Server ready at: ${url}`));
