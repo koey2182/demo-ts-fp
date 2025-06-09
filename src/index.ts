@@ -1,11 +1,19 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { schema } from './api/schema';
+import { PrismaClient } from './generated/prisma';
 
-const server = new ApolloServer({
+type Context = {
+    prisma: PrismaClient;
+};
+
+const prisma = new PrismaClient();
+
+const server = new ApolloServer<Context>({
     schema,
 });
 
-startStandaloneServer(server, {
+startStandaloneServer<Context>(server, {
     listen: { port: 4000 },
+    context: async (): Promise<Context> => ({ prisma }),
 }).then(({ url }) => console.log(`Server ready at: ${url}`));
