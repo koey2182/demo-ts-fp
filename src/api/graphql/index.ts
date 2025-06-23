@@ -1,2 +1,1 @@
-export * from './lotto';
-export * from "./type"
+export * from './hello-world';
