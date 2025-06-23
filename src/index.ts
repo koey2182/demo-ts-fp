@@ -1,19 +1,36 @@
 import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
+import { expressMiddleware } from '@apollo/server/express4';
 import { schema } from './api/schema';
-import { PrismaClient } from './generated/prisma';
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import { Context, createContext } from './api/context';
 
-type Context = {
-    prisma: PrismaClient;
+const createApp = async () => {
+    const app = express();
+    app.use(cors());
+    app.use(bodyParser.json());
+
+    const server = new ApolloServer<Context>({ schema });
+    await server.start();
+
+    // app.use('/api', http());
+
+    app.use(
+        '/graphql',
+        expressMiddleware(server, {
+            context: createContext,
+        }),
+    );
+
+    return app;
 };
 
-const prisma = new PrismaClient();
+const port = 4000;
 
-const server = new ApolloServer<Context>({
-    schema,
+createApp().then((app) => {
+    app.listen(port, () => {
+        console.log(`🚀 GraphQL ready at http://localhost:${port}/graphql`);
+        console.log(`🌍 RESTful API ready at http://localhost:${port}/api`);
+    });
 });
-
-startStandaloneServer<Context>(server, {
-    listen: { port: 4000 },
-    context: async (): Promise<Context> => ({ prisma }),
-}).then(({ url }) => console.log(`Server ready at: ${url}`));
