@@ -1,10 +1,8 @@
 import { createApp } from './api/app';
+import { config } from 'dotenv';
 
-const port = 4000;
+const port = parseInt(process.env.PORT ?? '3000');
 
 createApp().then((app) => {
-    app.listen(port, () => {
-        console.log(`🚀 GraphQL ready at http://localhost:${port}/graphql`);
-        console.log(`🌍 RESTful API ready at http://localhost:${port}/api`);
-    });
+    app.start(port);
 });

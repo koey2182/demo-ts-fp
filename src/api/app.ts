@@ -7,7 +7,10 @@ import bodyParser from 'body-parser';
 import { Context, createContext } from './context';
 import http from './http';
 
-export const createApp = async () => {
+export type Application = {
+    start: (port: number) => void;
+};
+export const createApp = async (): Promise<Application> => {
     const app = express();
     app.use(cors());
     app.use(bodyParser.json());
@@ -24,5 +27,12 @@ export const createApp = async () => {
         }),
     );
 
-    return app;
+    return {
+        start: (port) => {
+            app.listen(port, () => {
+                console.log(`🚀 GraphQL ready at http://localhost:${port}/graphql`);
+                console.log(`🌍 RESTful API ready at http://localhost:${port}/api`);
+            });
+        },
+    };
 };
