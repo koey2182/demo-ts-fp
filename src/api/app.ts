@@ -7,10 +7,11 @@ import bodyParser from 'body-parser';
 import { Context, createContext } from './context';
 import restApi from './rest-api';
 
-export type Application = {
-    start: (port: number) => void;
+export type DemoTsFpApp = {
+    express: express.Express;
 };
-export const createApp = async (): Promise<Application> => {
+
+export async function createApp(): Promise<DemoTsFpApp> {
     const app = express();
     app.use(cors());
     app.use(bodyParser.json());
@@ -27,12 +28,17 @@ export const createApp = async (): Promise<Application> => {
         }),
     );
 
-    return {
-        start: (port) => {
-            app.listen(port, () => {
-                console.log(`🚀 GraphQL ready at http://localhost:${port}/graphql`);
-                console.log(`🌍 RESTful API ready at http://localhost:${port}/api`);
-            });
-        },
-    };
+    return { express: app };
+}
+
+export type DemoTsFpAppOptions = {
+    port: number;
 };
+
+export function run(app: DemoTsFpApp, options: DemoTsFpAppOptions): void {
+    const { port } = options;
+    app.express.listen(port, () => {
+        console.log(`🚀 GraphQL ready at http://localhost:${port}/graphql`);
+        console.log(`🌍 RESTful API ready at http://localhost:${port}/api`);
+    });
+}
